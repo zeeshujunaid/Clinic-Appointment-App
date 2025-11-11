@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
 export default function TabLayout() {
   return (
@@ -36,7 +36,7 @@ export default function TabLayout() {
         name="Homescreen"
         options={{
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="home-filled" size={26} color={color} />
+            <Ionicons name="home" size={24} color="black" />
           ),
           tabBarLabel: "Home",
         }}
@@ -66,10 +66,10 @@ export default function TabLayout() {
 
       {/* Profile */}
       <Tabs.Screen
-        name="Profilescreen"
+        name="Profile"
         options={{
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="person" size={26} color={color} />
+            <Ionicons name="person-sharp" size={24} color="black" />
           ),
           tabBarLabel: "Profile",
         }}

@@ -32,7 +32,7 @@ export default function DrawerLayout() {
         options={{
           title: "Home",
           drawerIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
+            <Ionicons name="home" size={size} color={color} />
           ),
         }}
       />
@@ -42,7 +42,7 @@ export default function DrawerLayout() {
         options={{
           title: "Profile",
           drawerIcon: ({ color, size }) => (
-            <Ionicons name="person-outline" size={size} color={color} />
+            <Ionicons name="person" size={size} color={color} />
           ),
         }}
       />
