@@ -51,7 +51,7 @@ export default function Index() {
       </Text>
 
       <TouchableOpacity
-        onPress={() => router.push("/Login")}
+        onPress={() => router.push("/auth/Login")}
         style={{
           backgroundColor: "#97723d",
           paddingVertical: 14,

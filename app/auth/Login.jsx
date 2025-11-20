@@ -151,7 +151,7 @@ export default function Login() {
         </View>
         <View style={{ flexDirection: "row", marginTop: 10 }}>
           <Text style={{ color: "#777" }}>Don’t have an account? </Text>
-          <TouchableOpacity onPress={() => router.push("/Signup")}>
+          <TouchableOpacity onPress={() => router.push("/auth/Signup")}>
             <Text style={{ color: "#97723d", fontWeight: "600" }}>Sign Up</Text>
           </TouchableOpacity>
         </View>

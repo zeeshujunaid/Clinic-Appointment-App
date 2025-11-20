@@ -139,7 +139,7 @@ export default function Signup() {
           </View>
 
           <TouchableOpacity
-            onPress={() => router.push("(tabs)/Homescreen")}
+            onPress={() => router.push("/src/loader")}
             style={{
               backgroundColor: "#97723d",
               paddingVertical: 15,
@@ -175,7 +175,13 @@ export default function Signup() {
             <View style={{ flex: 1, height: 1, backgroundColor: "#ccc" }} />
           </View>
 
-          <View style={{ flexDirection: "row", marginTop: 10,justifyContent:"center" }}>
+          <View
+            style={{
+              flexDirection: "row",
+              marginTop: 10,
+              justifyContent: "center",
+            }}
+          >
             <Text style={{ color: "#777" }}>Alread’y have an account? </Text>
             <TouchableOpacity onPress={() => router.push("/Login")}>
               <Text style={{ color: "#97723d", fontWeight: "600" }}>
