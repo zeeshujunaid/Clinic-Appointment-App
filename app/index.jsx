@@ -3,65 +3,73 @@ import { useRouter } from "expo-router";
 
 export default function Index() {
   const router = useRouter();
+
   return (
     <View
       style={{
         flex: 1,
-        paddingTop: "40%",
+        backgroundColor: "#ffffffff", // light medical background
+        paddingHorizontal: 28,
+        paddingTop: "28%",
         alignItems: "center",
-        paddingHorizontal: 25,
-        backgroundColor:"#fff",
       }}
     >
       <StatusBar hidden />
-      {/* Logo */}
+
+      {/* Top Illustration */}
       <Image
         source={require("../assets/images/logo.avif")}
         style={{
-          width: 160,
+          width: 200,
           height: 260,
           resizeMode: "contain",
+          marginBottom: 10,
         }}
       />
 
+      {/* Heading */}
       <Text
         style={{
-          fontSize: 34,
+          fontSize: 38,
           fontWeight: "800",
-          color: "#222",
           textAlign: "center",
-          marginBottom: 12,
+          color: "#0F5FA3", // dark healthcare blue
+          marginBottom: 10,
           letterSpacing: 0.5,
         }}
       >
-        Welcome to <Text style={{ color: "#97723d" }}>Clinic Hub</Text>
+        Your Digital <Text style={{ color: "#1D8FE1" }}>Clinic Hub</Text>
       </Text>
 
+      {/* Subtitle */}
       <Text
         style={{
-          fontSize: 14,
-          color: "#555",
+          fontSize: 16,
+          color: "#4a5e72",
           textAlign: "center",
           lineHeight: 24,
-          width: "90%",
-          marginBottom: 40,
+          width: "92%",
+          marginBottom: 45,
         }}
       >
-        Book your appointment now from your phone
+        Effortlessly manage appointments, patients, staff, and hospital workflow
+        through a clean and modern interface.
       </Text>
 
+      {/* Button */}
       <TouchableOpacity
         onPress={() => router.push("/auth/Login")}
         style={{
-          backgroundColor: "#97723d",
-          paddingVertical: 14,
-          paddingHorizontal: 60,
-          borderRadius: 30,
-          shadowColor: "#FF4D4D",
-          shadowOpacity: 0.3,
-          shadowOffset: { width: 0, height: 8 },
-          shadowRadius: 10,
+          backgroundColor: "#1D8FE1", // primary blue
+          paddingVertical: 16,
+          paddingHorizontal: 65,
+          borderRadius: 40,
           elevation: 5,
+
+          shadowColor: "#1D8FE1",
+          shadowOpacity: 0.25,
+          shadowRadius: 12,
+          shadowOffset: { width: 0, height: 6 },
         }}
         activeOpacity={0.8}
       >
@@ -69,13 +77,25 @@ export default function Index() {
           style={{
             color: "#fff",
             fontSize: 18,
-            fontWeight: "600",
-            letterSpacing: 0.3,
+            fontWeight: "700",
+            letterSpacing: 0.5,
           }}
         >
-          Continue
+          Get Started
         </Text>
       </TouchableOpacity>
+
+      {/* Small tagline */}
+      <Text
+        style={{
+          marginTop: 22,
+          color: "#6d7e90",
+          fontSize: 13,
+          letterSpacing: 0.3,
+        }}
+      >
+        Healthcare • Appointments • Clinic Management
+      </Text>
     </View>
   );
 }
