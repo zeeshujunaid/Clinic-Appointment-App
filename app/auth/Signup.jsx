@@ -11,7 +11,10 @@ import {
   ScrollView,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { launchImageLibrary } from "react-native-image-picker";
+import * as ImagePicker from "expo-image-picker";
+import Toast from "react-native-toast-message";
+import baseurl from "../../services/config";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Signup() {
   const router = useRouter();
@@ -21,14 +24,69 @@ export default function Signup() {
   const [phone, setPhone] = useState("");
   const [profilePic, setProfilePic] = useState(null);
 
-  // Image picker function
-  const pickImage = () => {
-    launchImageLibrary({ mediaType: "photo" }, (response) => {
-      if (!response.didCancel && !response.errorCode) {
-        setProfilePic(response.assets[0].uri);
-      }
+
+const pickImage = async () => {
+  let result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    quality: 1,
+  });
+
+  if (!result.canceled) {
+    setProfilePic(result.assets[0].uri);
+  }
+};
+
+
+const Register = async () => {
+  if (!name || !email || !password || !phone) {
+    Toast.show({
+      type: "error",
+      text1: "Please fill all the fields",
     });
-  };
+    return;
+  }
+
+  try {
+    const response = await fetch(`${baseurl}/api/auth/register`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fullname: name,
+        email,
+        password,
+        phone,
+        image: profilePic, 
+      }),
+    });
+
+    const data = await response.json();
+    console.log(data);
+
+    if (!response.ok) {
+      Toast.show({
+        type: "error",
+        text1: data.message || "Registration failed",
+      });
+      return;
+    }
+
+    await AsyncStorage.setItem("token", data.token);
+
+    Toast.show({
+      type: "success",
+      text1: "Account created successfully!",
+    });
+
+    router.replace("/auth/Login");
+  } catch (error) {
+    console.error("Registration error:", error);
+    Toast.show({
+      type: "error",
+      text1: "Something went wrong!",
+    });
+  }
+};
+
 
   return (
     <KeyboardAvoidingView
@@ -203,7 +261,7 @@ export default function Signup() {
 
           {/* Sign Up Button */}
           <TouchableOpacity
-            onPress={() => router.push("/src/loader")}
+            onPress={Register}
             style={{
               backgroundColor: "#1D8FE1",
               paddingVertical: 15,

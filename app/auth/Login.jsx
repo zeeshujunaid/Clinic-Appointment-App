@@ -10,17 +10,74 @@ import {
   ScrollView,
 } from "react-native";
 import { useRouter } from "expo-router";
+import { useState, useContext } from "react";
+import Toast from "react-native-toast-message";
+import baseurl from "../../services/config";
+import { AuthContext } from "../context/usercontext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Login() {
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { login } = useContext(AuthContext);
+
+  const handleLogin = async () => {
+    if (!email) {
+      Toast.show({
+        type: "error",
+        text1: "Please enter your email",
+      });
+      return;
+    }
+    if (!password) {
+      Toast.show({
+        type: "error",
+        text1: "Please enter your password",
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch(`${baseurl}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        Toast.show({
+          type: "error",
+          text1: "Login failed",
+          text2: data.message || "",
+        });
+        return;
+      }
+
+      const fullUser = { ...data.user, token: data.token };
+      await AsyncStorage.setItem("token", data.token);
+
+      login(fullUser); // save user to context
+      console.log("Login successful:", fullUser);
+
+      router.replace("/src/loader");
+    } catch (error) {
+      console.log(error);
+      Toast.show({
+        type: "error",
+        text1: "Error during login",
+      });
+    }
+  };
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: "#ffffffff" }} // light medical bg
+      style={{ flex: 1, backgroundColor: "#fff" }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <StatusBar hidden />
-
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
@@ -29,7 +86,7 @@ export default function Login() {
           paddingVertical: 50,
         }}
       >
-        {/* Logo Section */}
+        {/* Logo */}
         <View
           style={{
             height: 150,
@@ -44,15 +101,9 @@ export default function Login() {
           />
         </View>
 
-        {/* Welcome Section */}
+        {/* Welcome */}
         <View style={{ alignItems: "center", marginBottom: 25 }}>
-          <Text
-            style={{
-              fontSize: 32,
-              fontWeight: "800",
-              color: "#0F5FA3",
-            }}
-          >
+          <Text style={{ fontSize: 32, fontWeight: "800", color: "#0F5FA3" }}>
             Welcome Back
           </Text>
           <Text style={{ fontSize: 14, color: "#4a5e72", marginTop: 6 }}>
@@ -60,7 +111,7 @@ export default function Login() {
           </Text>
         </View>
 
-        {/* Form Section */}
+        {/* Form */}
         <View style={{ width: "85%" }}>
           <Text style={{ fontSize: 16, color: "#0F5FA3", marginBottom: 6 }}>
             Email
@@ -70,6 +121,8 @@ export default function Login() {
             placeholderTextColor="#8ba4b1"
             keyboardType="email-address"
             autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
             style={{
               borderWidth: 1,
               borderColor: "#c9d9e8",
@@ -89,6 +142,8 @@ export default function Login() {
             placeholderTextColor="#8ba4b1"
             secureTextEntry
             autoCapitalize="none"
+            value={password}
+            onChangeText={setPassword}
             style={{
               borderWidth: 1,
               borderColor: "#c9d9e8",
@@ -96,10 +151,10 @@ export default function Login() {
               padding: 14,
               fontSize: 16,
               backgroundColor: "#ffffff",
+              marginBottom: 18,
             }}
           />
 
-          {/* Forgot Password */}
           <View
             style={{
               flexDirection: "row",
@@ -116,9 +171,9 @@ export default function Login() {
           </View>
         </View>
 
-        {/* Sign In Button */}
+        {/* Sign In */}
         <TouchableOpacity
-          onPress={() => console.log("Sign In pressed")}
+          onPress={handleLogin}
           style={{
             backgroundColor: "#1D8FE1",
             paddingVertical: 15,
@@ -126,7 +181,6 @@ export default function Login() {
             width: "70%",
             alignItems: "center",
             elevation: 4,
-
             shadowColor: "#1D8FE1",
             shadowOpacity: 0.3,
             shadowRadius: 8,
@@ -134,13 +188,7 @@ export default function Login() {
             marginBottom: 30,
           }}
         >
-          <Text
-            style={{
-              color: "#fff",
-              fontSize: 18,
-              fontWeight: "700",
-            }}
-          >
+          <Text style={{ color: "#fff", fontSize: 18, fontWeight: "700" }}>
             Sign In
           </Text>
         </TouchableOpacity>
@@ -162,7 +210,7 @@ export default function Login() {
           <View style={{ flex: 1, height: 1, backgroundColor: "#cbd7e3" }} />
         </View>
 
-        {/* Signup Link */}
+        {/* Signup */}
         <View style={{ flexDirection: "row", marginTop: 10 }}>
           <Text style={{ color: "#4a5e72" }}>Don't have an account? </Text>
           <TouchableOpacity onPress={() => router.push("/auth/Signup")}>
