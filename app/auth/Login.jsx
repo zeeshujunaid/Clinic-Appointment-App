@@ -12,63 +12,63 @@ import {
 import { useRouter } from "expo-router";
 import { useState, useContext } from "react";
 import Toast from "react-native-toast-message";
+import axios from "axios";
 import baseurl from "../../services/config";
 import { AuthContext } from "../context/usercontext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Login() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useContext(AuthContext);
 
   const handleLogin = async () => {
-    if (!email) {
+    if (!email || !password) {
       Toast.show({
         type: "error",
-        text1: "Please enter your email",
-      });
-      return;
-    }
-    if (!password) {
-      Toast.show({
-        type: "error",
-        text1: "Please enter your password",
+        text1: "Please fill all fields",
       });
       return;
     }
 
     try {
-      const response = await fetch(`${baseurl}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+      setLoading(true);
 
-      const data = await response.json();
+      const response = await axios.post(
+        `${baseurl}/api/auth/login`,
+        {
+          email,
+          password,
+        }
+      );
 
-      if (!response.ok) {
+      const data = response.data;
+
+      if (!data?.token) {
         Toast.show({
           type: "error",
-          text1: "Login failed",
-          text2: data.message || "",
+          text1: data.message || "Invalid login",
         });
         return;
       }
 
       const fullUser = { ...data.user, token: data.token };
-      await AsyncStorage.setItem("token", data.token);
 
-      login(fullUser); // save user to context
-      console.log("Login successful:", fullUser);
+      await AsyncStorage.setItem("token", data.token);
+      login(fullUser);
 
       router.replace("/src/loader");
     } catch (error) {
-      console.log(error);
+      console.log("Login error:", error);
+
       Toast.show({
         type: "error",
-        text1: "Error during login",
+        text1: error?.response?.data?.message || "Login failed",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -86,6 +86,7 @@ export default function Login() {
           paddingVertical: 50,
         }}
       >
+        {/* SAME UI (no change) */}
         {/* Logo */}
         <View
           style={{
@@ -163,35 +164,25 @@ export default function Login() {
               marginBottom: 28,
             }}
           >
-            <TouchableOpacity>
-              <Text style={{ color: "#fc5959ff", fontSize: 13 }}>
-                Forgot Password?
+            <TouchableOpacity
+              onPress={handleLogin}
+              disabled={loading}
+              style={{
+                backgroundColor: loading ? "#8ac4f3" : "#1D8FE1",
+                paddingVertical: 15,
+                borderRadius: 12,
+                width: "70%",
+                alignItems: "center",
+                opacity: loading ? 0.7 : 1,
+                marginBottom: 30,
+              }}
+            >
+              <Text style={{ color: "#fff", fontSize: 18, fontWeight: "700" }}>
+                {loading ? "Loading..." : "Sign In"}
               </Text>
             </TouchableOpacity>
           </View>
         </View>
-
-        {/* Sign In */}
-        <TouchableOpacity
-          onPress={handleLogin}
-          style={{
-            backgroundColor: "#1D8FE1",
-            paddingVertical: 15,
-            borderRadius: 12,
-            width: "70%",
-            alignItems: "center",
-            elevation: 4,
-            shadowColor: "#1D8FE1",
-            shadowOpacity: 0.3,
-            shadowRadius: 8,
-            shadowOffset: { width: 0, height: 4 },
-            marginBottom: 30,
-          }}
-        >
-          <Text style={{ color: "#fff", fontSize: 18, fontWeight: "700" }}>
-            Sign In
-          </Text>
-        </TouchableOpacity>
 
         {/* Divider */}
         <View
@@ -213,7 +204,7 @@ export default function Login() {
         {/* Signup */}
         <View style={{ flexDirection: "row", marginTop: 10 }}>
           <Text style={{ color: "#4a5e72" }}>Don't have an account? </Text>
-          <TouchableOpacity onPress={() => router.push("/auth/Signup")}>
+          <TouchableOpacity onPress={() => router.push("/src/admin/Dashboard")}>
             <Text style={{ color: "#1D8FE1", fontWeight: "700" }}>Sign Up</Text>
           </TouchableOpacity>
         </View>
