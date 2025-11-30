@@ -105,7 +105,7 @@ export default function Login() {
         {/* Welcome */}
         <View style={{ alignItems: "center", marginBottom: 25 }}>
           <Text style={{ fontSize: 32, fontWeight: "800", color: "#0F5FA3" }}>
-            Welcome Back
+            Welcome
           </Text>
           <Text style={{ fontSize: 14, color: "#4a5e72", marginTop: 6 }}>
             Please log in to continue
